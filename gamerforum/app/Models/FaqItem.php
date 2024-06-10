@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class News extends Model
+class FaqItem extends Model
 {
     use HasFactory;
 
-    public function user()
+    public function category()
 {
-    return $this->belongsTo(User::class);
+    return $this->belongsTo(FaqCategory::class);
 }
 
 }

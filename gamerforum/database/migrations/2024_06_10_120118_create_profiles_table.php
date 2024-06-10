@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('news', function (Blueprint $table) {
+        Schema::create('profiles', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('cover_image')->nullable();
-            $table->text('content');
-            $table->timestamp('published_at')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->date('birthday')->nullable();
+            $table->string('avatar')->nullable();
+            $table->text('bio')->nullable();
             $table->timestamps();
         });
+        
     }
 
     /**
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('news');
+        Schema::dropIfExists('profiles');
     }
 };
