@@ -1,6 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ThreadController;
+use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\AdminController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +29,32 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// Public routes
+Route::get('/', [NewsController::class, 'index']);
+Route::get('/news/{news}', [NewsController::class, 'show']);
+Route::get('/profile/{user}', [ProfileController::class, 'show']);
+Route::get('/faq', [FaqController::class, 'index']);
+Route::get('/contact', [ContactController::class, 'create']);
+Route::post('/contact', [ContactController::class, 'store']);
+Route::get('/threads', [ThreadController::class, 'index']);
+Route::get('/threads/{thread}', [ThreadController::class, 'show']);
+
+// Authenticated routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit']);
+    Route::post('/profile', [ProfileController::class, 'update']);
+    Route::post('/news/{news}/comment', [ReplyController::class, 'store']);
+    Route::post('/faq/question', [FaqController::class, 'store']);
+    Route::post('/threads', [ThreadController::class, 'store']);
+    Route::post('/threads/{thread}/reply', [ReplyController::class, 'store']);
+});
+
+// Admin routes
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('admin/news', NewsController::class)->except(['index', 'show']);
+    Route::resource('admin/faq', FaqController::class)->except(['index']);
+    Route::get('admin/contact', [ContactController::class, 'index']);
+    Route::post('admin/contact/{contact}', [ContactController::class, 'reply']);
+    Route::post('admin/promote/{user}', [AdminController::class, 'promote']);
+});
